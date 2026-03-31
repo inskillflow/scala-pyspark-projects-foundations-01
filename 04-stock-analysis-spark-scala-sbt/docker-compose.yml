@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+
+  tp-stocks:
+    image: sbtscala/scala-sbt:eclipse-temurin-21_sbt-1.9.7_scala-2.12.18
+    container_name: spark-tp-stocks
+    working_dir: /app
+    volumes:
+      - .:/app
+      - sbt-cache:/root/.sbt
+      - ivy-cache:/root/.ivy2
+    environment:
+      - JAVA_TOOL_OPTIONS=--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+    command: sbt "runMain TP_StockSQL"
+
+  tp-income:
+    image: sbtscala/scala-sbt:eclipse-temurin-21_sbt-1.9.7_scala-2.12.18
+    container_name: spark-tp-income
+    working_dir: /app
+    volumes:
+      - .:/app
+      - sbt-cache:/root/.sbt
+      - ivy-cache:/root/.ivy2
+    environment:
+      - JAVA_TOOL_OPTIONS=--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+    command: sbt "runMain TP_Income"
+
+  tp-multistocks:
+    image: sbtscala/scala-sbt:eclipse-temurin-21_sbt-1.9.7_scala-2.12.18
+    container_name: spark-tp-multistocks
+    working_dir: /app
+    volumes:
+      - .:/app
+      - sbt-cache:/root/.sbt
+      - ivy-cache:/root/.ivy2
+    environment:
+      - JAVA_TOOL_OPTIONS=--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+    command: sbt "runMain Correction_TP2"
+
+  tp-window:
+    image: sbtscala/scala-sbt:eclipse-temurin-21_sbt-1.9.7_scala-2.12.18
+    container_name: spark-tp-window
+    working_dir: /app
+    volumes:
+      - .:/app
+      - sbt-cache:/root/.sbt
+      - ivy-cache:/root/.ivy2
+    environment:
+      - JAVA_TOOL_OPTIONS=--add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+    command: sbt "runMain Correction_TP3"
+
+volumes:
+  sbt-cache:
+  ivy-cache:
