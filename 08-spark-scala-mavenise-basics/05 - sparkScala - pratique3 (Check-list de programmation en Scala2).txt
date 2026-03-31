@@ -1,0 +1,282 @@
+CHECK LIST DE PROGRAMMATION EN SCALA 
+
+CARACTERISTIQUES DE SCALA 
+
+- Scala est un langage à la fois objet et fonctionnel
+
+- le code exécuté .scala, produit un fichier .class , qui lorsque compilé, génère un fichier .class, qui est exécuté dans une JVM, une machine virtuelle Java. Ainsi, lorsqu'on va déployer notre application avec Maven, les objets Scala seront transformés en .class et ce sont ces .class qui vont être placé en production pour être exéctués. 
+
+- langage très similaire à Java. Il a une syntaxe très proche de Java et peut utiliser plusieurs librairies de Java. 
+
+- langage à la base de Spark. Il est très utilisé pour le développement d'application de Big Data, spécialement les application de Data Engineering. 
+
+- Immutabilité des variables : l'immutabilité est très utile lors de la gestion d'accès concurrente aux données. 
+
+- Lazy computations : les calculs sont "paresseux" par défaut avec Scala. Cela signifie que Scala exécute les expressions uniquement lorsqu'elles sont nécessaires. Cela améliore grandement les performances de l'application. 
+
+
+Site officiel : https://www.scala-lang.org/
+Documentation officielle : https://docs.scala-lang.org/overviews/scala-book/introduction.html
+tuto : https://www.javatpoint.com/scala-tutorial
+
+EXEMPLE TRADITIONNEL 
+
+object Hello extends App {
+    println("Hello, world")
+}
+
+POUR UN DEPLOIEMENT EN PRODUCTION AVEC MAVEN
+
+- version Scala recommandées : 2.11.0 ou 2.11.8 
+Attention !!! Le JDK compatible avec la version 2.11 de Scala est le JDK 1.8
+
+- Repertoire de dépendance Maven du SDK
+<!-- https://mvnrepository.com/artifact/org.scala-lang/scala-library -->
+<dependency>
+    <groupId>org.scala-lang</groupId>
+    <artifactId>scala-library</artifactId>
+    <version>2.11.8</version>
+</dependency>
+
+- plugin Maven pour le built
+<!-- https://mvnrepository.com/artifact/org.scala-tools/maven-scala-plugin -->
+<dependency>
+    <groupId>org.scala-tools</groupId>
+    <artifactId>maven-scala-plugin</artifactId>
+    <version>2.11</version>
+</dependency>
+
+==============================================
+ <build>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
+
+        <plugins>
+            <plugin>
+                    <groupId>org.scala-tools</groupId>
+                    <artifactId>maven-scala-plugin</artifactId>
+                    <version>2.11</version>
+            </plugin>
+        </plugins>
+==============================================
+
+LES TYPES DE BASE EN SCALA  
+- Byte
+- Int 
+- String
+- Boolean
+- Unit : type qui ne retourne aucune valeur (équivalent de void() en Java)
+- Any : un peu comme un fourre-tout Scala
+
+
+LES VARIABLES  EN SCALA 
+
+[private] [val|var] nom_variable : Type = valeur (typage fort)
+[val|var] nom_variable = valeur  (typage faible)
+
+en scala on distingue 2 types de variables : les variables immutables et les variables mutables. 
+- les variables immutables, déclarées grâce au mot-clé "val", sont des variables dont le contenu ne peut pas être changé. Autrement dit, ce sont des "constantes" grosso modo.
+
+Syntaxe : Val mavariable_immutable : type = valeur 
+eg : Val test : Int = 15 
+test = test + 2  ===> renvoie une erreur 
+
+Pour corriger l'erreur, faut créer une 2ème variable immutable 
+val test2 = test + 2 
+
+- les variables mutables, déclarées grâce au mot-clé "Var", sont des variables classiques, dont la valeur peut être changée. 
+Syntaxe : VaR mavariable_mutable : type = valeur 
+eg : Var test = 15 
+test = test + 2  ===> renvoie 17
+
+les variables peuvent aussi être déclarées avec la syntaxe $nom_variable 
+eg : $var : Int = 125 
+
+
+on peut passer des valeurs 
+ex : val canal : String = "texte à voir" 
+
+ou des paramètres à des variables
+exemple : val Sc : SparkSession = Sparksession.builder.getorenable() 
+Val p : Person = new Person("Julien") 
+
+case class Flight(DEST_COUNTRY_NAME: String,
+                  ORIGIN_COUNTRY_NAME: String,
+                  count: BigInt)
+val flightDF : Flight = new Flight ("cameroun", "Dubai", 10) 
+
+
+- syntaxe définition d'une variale (typage fort)
+val nomFonction : type_variable = valeur
+
+
+- syntaxe définition d'une variale (typage faible)
+[private|public] var|val nomFonction = valeur
+ 
+
+LES FONCTIONS ET PROCEDURES EN SCALA 
+les procédures sont des fonctions qui ne renvoient pas de résultat. Leur caractéristique c'est qu'ils renvoient le type "Unit" (équivalent en java de Void) (qui signifie "vide"). 
+Tandis que les fonctions renvoient des résultats.  
+
+Unit = f(y) 
+y = f(x) 
+
+- syntaxe de la définition d'une fonction :
+ 
+def NomFonction(param1 : typeparam, param2 : typeparam,...) : TypeDeResultat = {  
+    // statements to be executed  
+     [return resultat_fonction]
+}  
+
+def opp(x : Int) : Int = { } 
+
+eg : def TestHello (texte : String) : Unit = {
+	 printlin("voici votre message " + $texte)
+     }
+
+les fonctions  : 
+eg : def TestHello (texte : String) : String = {
+	"voici votre message " + $texte
+     }
+ou bien 
+    def TestHello (texte : String) : String = {
+	return "voici votre message " + $texte
+     }
+ou bien 
+    def TestHello (texte : String) : String = "voici votre message " + $texte
+
+def getClassAsString(x: Any):String = x match {
+    case s: String => s + " is a String"
+    case i: Int => "Int"
+    case f: Float => "Float"
+    case l: List[_] => "List"
+    case p: Person => "Person"
+    case _ => "Unknown"
+}
+
+
+eg fonction célèbre du calcul du factoriel : 
+def factorial (n: Int) : Int = {
+    if (n == 0)
+	return 1 
+    else
+	return n * factorial(n-1) 
+
+
+LES STRUCTURES CONDITIONNELLES 
+Scala a 3 instructions conditionnelles : le IF, le WHILE, le FOR et le FOR EACH
+
+- le WHILE : boucle conditionnelle, signifie que l'expression s'exécute tant que la condition est vrai. 
+Syntaxe : while (condition) { expression }
+
+eg : var i = 0 
+     while (i < 7) {
+	   println(i)
+	  i = i + 1
+	}
+- le FOR : boucle conditionnelle, qui exécute une action pour une plage de valeur donnée du compteur. 
+Syntaxe : for (condition) {expression}
+Par exemple : 
+var i = 0 
+for (i <- 0 to 10) {
+   println(i)
+}
+
+
+LES STUCTURES DE DONNEES SCALA 
+Scala fournit une bibliothèque riche pour la collecte de données. Ces collections de données peuvent être mutables ou immutables. Voici les librairies qui contiennent toutes les collections de Scala : 
+- Scala.collection.mutable
+- Scala.collection.immutable 
+
+La collection immutable est par défaut chargée et il faut importer la collection mutable avant de pouvoir l'utiliser.
+
+Sinon, les collections les plus utilisées sont : les listes, les tuples, les Map, les sets et les "tableaux"
+
+1) Les listes 
+collection immutable et ordonée de données de même type. 
+eg : val list2:List[Int] = List(1,8,5,6,9,58,23,15,4)  
+val names = List("joel", "ed", "chris", "maurice")
+val nums = List.range(0, 10)
+
+for (name <- names) println(name)
+
+pour manipuler les listes, les fonctions anonymes sont très importantes. 
+val resultat2 = names.count( s => s.startsWith("b"))
+val liste2 = names.filter(s => s.startsWith("b"))
+
+val ints = List(1,2,3)
+val doubledInts = ints.map(_ * 2)
+val doubledInts = ints.map(_ * 2)
+
+val doubledInts = ints.map((i: Int) => i * 2)
+val doubledInts = ints.map(i => i * 2)
+
+val x = ints.filter(_ > 5)
+val x = ints.filter((i: Int) => i % 2 == 0)
+
+
+Il y'a également l'itérateur foreach. 
+names.foreach(println) ou bien names.foreach( e => println(e))
+names.filter(s => s.startsWith("b")).foreach(println) 
+
+Il y'a aussi la fonction map, qui applique le calcul ou l'algorithme à tous les élements de la liste 
+val capNames = names.map(_.capitalize)
+val lessThanFive = liste2.map(_ < 5)
+val doubles = liste2.map(_ * 2)
+
+2) les tuples 
+collection immutable de données hétérogènes.Les tuples sont des ensembles ordonnés de valeurs. Ce sont des enregistrements immuables qui peuvent être reférencés par leur position. 
+Syntaxe : Val nom_tuple = ("jvc", 40, True) 
+Tout comme dans les listes, les tuples peuvent contenue plusieurs types. 
+
+nom_tuple._1  renvoie "jvc" (la reférence dans les tuples commence à 1, et non 0 comme dans les tableaux et listes)
+val tuple_name = (element, element, element) 
+
+class Person(var name: String)
+eg :  val letters = ('a' to 'f' by 2) 
+val t = (11, "Eleven", new Person("Eleven"))
+
+t._1, t._2 
+
+on peut convertir des tuples en liste 
+val nums = (1 to 10 by 2).toList
+val letters = ('a' to 'f').toList
+val letters = ('a' to 'f' by 2).toList
+
+3) Les Map 
+ les Maps sont des tables de hachage, c'est-à-dire un tableau de clé-valeur. 
+Syntaxe : val nom_map = Map("clé" -> valeur, "clé" -> valeur, etc..)
+eg  : test_map = Map("nom" -> "Julien", "prenom" -> "chokogoue", "age" -> 40)
+Manipulation
+test_map.keys
+test_map.values
+test_map.keys.foreach(x => println(x))
+
+
+table de clés-valeurs 
+val states = Map(
+    "AK" -> "Alaska",
+    "IL" -> "Illinois",
+    "KY" -> "Kentucky"
+)
+
+4) Les tableaux
+collection ordonnée et mutables des valeurs du même type. 
+Syntaxe :  val arrayName : Array[arrayType] = Array(elt1, el2, el3, etc); 
+eg : Val tableau : Array[String] = Array("a", "b", "c") 
+
+Syntaxe : [val|var] nom_tableau = new Array[type] (nbre_elements) 
+
+eg : tableau immutable de chaîne de caractères 
+val a = new Array[String] (4) 
+a(0) = "Rehouma"
+a(1) = "Haythem"
+For (i <- 0 to 1) {
+    print (a(i))
+}
+
+
+Pour plus de détails sur le programmation Scala : 
+Site officiel : https://www.scala-lang.org/
+Documentation officielle : https://docs.scala-lang.org/overviews/scala-book/introduction.html
+tuto : https://www.javatpoint.com/scala-tutorial
